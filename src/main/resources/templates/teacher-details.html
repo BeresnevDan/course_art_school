@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="ru"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${title} ?: 'Преподаватель'">Преподаватель</title>
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+          crossorigin="anonymous">
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+
+</head>
+<body>
+
+<nav th:replace="fragments/navbar :: main-navbar"></nav>
+
+
+<div class="container mt-4">
+    <h1 th:text="${teacher.fullName}">ФИО</h1>
+    <p class="lead">
+        Специализация: <span th:text="${teacher.specialization}">Живопись</span>
+    </p>
+
+    <dl class="row">
+        <dt class="col-sm-3">Стаж (лет)</dt>
+        <dd class="col-sm-9" th:text="${teacher.experienceYears}">5</dd>
+
+        <dt class="col-sm-3" sec:authorize="isAuthenticated()">Email</dt>
+        <dd class="col-sm-9" sec:authorize="isAuthenticated()"
+            th:text="${teacher.email}">teacher@example.com</dd>
+
+        <dt class="col-sm-3" sec:authorize="isAuthenticated()">Телефон</dt>
+        <dd class="col-sm-9" sec:authorize="isAuthenticated()"
+            th:text="${teacher.phone}">+7...</dd>
+    </dl>
+
+    <div class="mt-3">
+        <h5>Краткая биография</h5>
+        <p th:text="${teacher.bio}">
+            Здесь можно указать образование, награды, участие в выставках и т.д.
+        </p>
+    </div>
+
+    <div class="mt-3">
+        <h5>Дисциплины</h5>
+        <div th:if="${#lists.isEmpty(teacher.subjects)}">
+            <p class="text-muted">Дисциплины не назначены.</p>
+        </div>
+        <ul th:if="${!#lists.isEmpty(teacher.subjects)}">
+            <li th:each="s : ${teacher.subjects}">
+                <span th:text="${s.code + ' — ' + s.name}">PNT-101 — Живопись</span>
+            </li>
+        </ul>
+    </div>
+
+
+    <div class="mt-3">
+        <a class="btn btn-secondary" th:href="@{/teachers}">Назад к списку</a>
+        <a class="btn btn-primary" th:href="@{'/teachers/' + ${teacher.id} + '/edit'}"
+           sec:authorize="hasRole('ADMIN')">
+            Редактировать
+        </a>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+        crossorigin="anonymous"></script>
+</body>
+</html>

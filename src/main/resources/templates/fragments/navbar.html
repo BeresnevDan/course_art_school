@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="ru"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Navbar Fragment</title>
+</head>
+
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4"
+     th:fragment="main-navbar">
+
+    <div class="container-fluid">
+
+        <!-- Логотип -->
+        <a class="navbar-brand" th:href="@{/}">ИС художественной школы</a>
+
+        <!-- Мобильная кнопка -->
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                data-bs-target="#mainNavbar" aria-controls="mainNavbar"
+                aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <!-- Основной блок меню -->
+        <div class="collapse navbar-collapse" id="mainNavbar">
+
+            <!-- ЛЕВАЯ ЧАСТЬ (навигация по сайту) -->
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+
+                <!-- Общие пункты (видны всем, даже гостям) -->
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/}">Главная</a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/lessons}">Расписание</a>
+                </li>
+
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/teachers}">Преподаватели</a>
+                </li>
+
+                <!-- Ученики — Teacher и Admin -->
+                <li class="nav-item" sec:authorize="hasAnyRole('TEACHER','ADMIN')">
+                    <a class="nav-link" th:href="@{/students}">Ученики</a>
+                </li>
+
+                <!-- Дисциплины — только Admin -->
+                <li class="nav-item" sec:authorize="hasRole('ADMIN')">
+                    <a class="nav-link" th:href="@{/subjects}">Дисциплины</a>
+                </li>
+
+                <!-- Группы — только Admin -->
+                <li class="nav-item" sec:authorize="hasRole('ADMIN')">
+                    <a class="nav-link" th:href="@{/groups}">Группы</a>
+                </li>
+
+                <!-- Отчёты — только Admin -->
+                <li class="nav-item" sec:authorize="hasRole('ADMIN')">
+                    <a class="nav-link" th:href="@{/reports}">Отчёты</a>
+                </li>
+
+                <!-- Журнал — Teacher и Admin -->
+                <li class="nav-item" sec:authorize="hasAnyRole('TEACHER','ADMIN')">
+                    <a class="nav-link" th:href="@{/journal}">Журнал</a>
+                </li>
+
+                <!-- Админ-панель -->
+                <li class="nav-item" sec:authorize="hasRole('ADMIN')">
+                    <a class="nav-link" th:href="@{/admin}">Админ-панель</a>
+                </li>
+
+                <!-- Об авторе — всегда доступна -->
+                <li class="nav-item">
+                    <a class="nav-link" th:href="@{/about}">Об авторе</a>
+                </li>
+            </ul>
+
+            <!-- ПРАВАЯ ЧАСТЬ (логин / пользователь) -->
+            <ul class="navbar-nav ms-auto">
+
+                <!-- Если гость -->
+                <li class="nav-item" sec:authorize="isAnonymous()">
+                    <a class="nav-link" th:href="@{/login}">Войти</a>
+                </li>
+
+                <!-- Если пользователь залогинен -->
+                <li class="nav-item dropdown" sec:authorize="isAuthenticated()">
+                    <a class="nav-link dropdown-toggle" href="#" id="userDropdown"
+                       role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <span sec:authentication="name">user</span>
+                    </a>
+
+                    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+
+                        <li><a class="dropdown-item" th:href="@{/profile}">Профиль</a></li>
+
+                        <li><hr class="dropdown-divider"></li>
+
+                        <li>
+                            <form th:action="@{/logout}" method="post" class="px-3">
+                                <button type="submit" class="btn btn-link p-0">Выйти</button>
+                            </form>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+
+        </div>
+    </div>
+
+</nav>
+
+</body>
+</html>

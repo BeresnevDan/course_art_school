@@ -1,0 +1,26 @@
+spring:
+  application:
+    name: art-school
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/art_school_db
+    username: art_school_user
+    password: art_school_pass
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+server:
+  port: 8080
+
+logging:
+  level:
+    org.springframework.security: INFO
+    org.hibernate.SQL: DEBUG

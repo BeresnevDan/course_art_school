@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="ru"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Об авторе</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+          rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+
+</head>
+
+<body>
+
+<nav th:replace="fragments/navbar :: main-navbar"></nav>
+
+<div class="container mt-4">
+
+    <h1 class="mb-4">Об авторе</h1>
+
+    <div class="row">
+        <!-- Фото -->
+        <div class="col-md-4 text-center">
+            <img src="/images/author.jpg"
+                 alt="Фото автора"
+                 class="img-fluid rounded shadow"
+                 style="max-width: 250px;">
+        </div>
+
+        <!-- Информация -->
+        <div class="col-md-8">
+            <h3 class="fw-bold">Береснев Даниил Олегович</h3>
+            <p class="mb-1"><strong>Группа:</strong> ПИ23-2</p>
+            <p class="mb-1"><strong>Вуз:</strong> Финансовый университет при Правительстве РФ</p>
+
+            <hr>
+
+            <h4 class="fw-semibold mt-4">Опыт работы с технологиями</h4>
+            <p>
+                В ходе выполнения данного проекта автор работал с современным стеком технологий
+                разработчика веб-приложений на Java:
+            </p>
+
+            <ul>
+                <li><strong>Java 17+</strong> — основной язык разработки;</li>
+                <li><strong>Spring Boot 3</strong> — создание backend-части, конфигурация приложения;</li>
+                <li><strong>Spring MVC</strong> — построение контроллеров и маршрутов;</li>
+                <li><strong>Spring Security</strong> — система аутентификации, авторизации и ролей;</li>
+                <li><strong>Spring Data JPA / Hibernate</strong> — работа с базой данных;</li>
+                <li><strong>PostgreSQL</strong> — хранение данных и проектирование структуры БД;</li>
+                <li><strong>Thymeleaf</strong> — построение HTML-шаблонов;</li>
+                <li><strong>Bootstrap 5</strong> — вёрстка интерфейса;</li>
+                <li><strong>Chart.js</strong> — визуализация статистики в разделе «Отчёты»;</li>
+                <li><strong>MVC-архитектура</strong> — разделение модели, логики и представления.</li>
+            </ul>
+
+            <p>
+                В рамках проекта автор получил практический опыт в разработке CRUD-функционала,
+                проектировании сущностей, построении связей между моделями, создании удобного
+                пользовательского интерфейса и администраторской панели.
+            </p>
+
+            <hr>
+
+            <h4 class="fw-semibold mt-4">Период разработки проекта</h4>
+            <p><strong>Начало:</strong> 1 ноября 2025</p>
+            <p><strong>Завершение:</strong> 24 ноября 2025</p>
+        </div>
+    </div>
+
+    <hr class="mt-4">
+
+    <div class="text-muted small mb-4">
+        Данная курсовая работа выполнена в рамках дисциплины «Проектирование информационных систем».
+    </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>

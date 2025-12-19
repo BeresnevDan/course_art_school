@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="ru"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${title} ?: 'Группы'">Группы</title>
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+          crossorigin="anonymous">
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+
+</head>
+<body>
+<nav th:replace="fragments/navbar :: main-navbar"></nav>
+
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h1 th:text="${title}">Группы</h1>
+
+        <a class="btn btn-primary" th:href="@{/groups/new}">
+            Добавить группу
+        </a>
+    </div>
+
+    <!-- Поиск -->
+    <form class="row mb-3" th:action="@{/groups}" method="get">
+        <div class="col-md-4">
+            <input type="text" name="q" class="form-control"
+                   placeholder="Поиск по коду или названию"
+                   th:value="${query}">
+        </div>
+        <div class="col-md-2">
+            <button type="submit" class="btn btn-outline-secondary">Найти</button>
+        </div>
+    </form>
+
+    <div th:if="${#lists.isEmpty(groups)}">
+        <div class="alert alert-info">
+            Группы не найдены.
+        </div>
+    </div>
+
+    <div th:if="${!#lists.isEmpty(groups)}">
+        <table class="table table-striped table-bordered align-middle">
+            <thead>
+            <tr>
+                <th>Код</th>
+                <th>Название</th>
+                <th>Год набора</th>
+                <th>Уровень</th>
+                <th>Куратор</th>
+                <th class="text-center">Действия</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="g : ${groups}">
+                <td th:text="${g.code}">JIV-101</td>
+                <td>
+                    <a th:href="@{'/groups/' + ${g.id}}"
+                       th:text="${g.name}">Живопись 1 курс</a>
+                </td>
+                <td th:text="${g.admissionYear}">2024</td>
+                <td th:text="${g.level}">Базовый</td>
+                <td th:text="${g.curator != null ? g.curator.fullName : 'Не назначен'}">
+                    Иванов И.И.
+                </td>
+                <td class="text-center">
+                    <a class="btn btn-sm btn-outline-secondary"
+                       th:href="@{'/groups/' + ${g.id}}">
+                        Открыть
+                    </a>
+
+                    <a class="btn btn-sm btn-outline-primary"
+                       th:href="@{'/groups/' + ${g.id} + '/edit'}">
+                        ✏️
+                    </a>
+
+                    <form th:action="@{'/groups/' + ${g.id} + '/delete'}"
+                          method="post"
+                          style="display:inline-block"
+                          onsubmit="return confirm('Удалить эту группу?');">
+                        <input type="hidden"
+                               th:name="${_csrf.parameterName}"
+                               th:value="${_csrf.token}"/>
+                        <button type="submit" class="btn btn-sm btn-outline-danger">
+                            🗑️
+                        </button>
+                    </form>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+        crossorigin="anonymous"></script>
+</body>
+</html>

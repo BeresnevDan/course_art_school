@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="ru"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${title} ?: 'Отчёты'">Отчёты</title>
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+          crossorigin="anonymous">
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+<nav th:replace="fragments/navbar :: main-navbar"></nav>
+
+<div class="container mt-4">
+    <h1 th:text="${title}">Отчёты и статистика</h1>
+
+    <!-- ОБЩИЕ ЦИФРЫ -->
+    <div class="row mt-4 g-3">
+        <div class="col-md-2 col-sm-4">
+            <div class="card text-center">
+                <div class="card-body">
+                    <div class="fw-bold">Ученики</div>
+                    <div class="display-6" th:text="${overview.totalStudents}">0</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2 col-sm-4">
+            <div class="card text-center">
+                <div class="card-body">
+                    <div class="fw-bold">Преподаватели</div>
+                    <div class="display-6" th:text="${overview.totalTeachers}">0</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2 col-sm-4">
+            <div class="card text-center">
+                <div class="card-body">
+                    <div class="fw-bold">Группы</div>
+                    <div class="display-6" th:text="${overview.totalGroups}">0</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2 col-sm-4">
+            <div class="card text-center">
+                <div class="card-body">
+                    <div class="fw-bold">Дисциплины</div>
+                    <div class="display-6" th:text="${overview.totalSubjects}">0</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2 col-sm-4">
+            <div class="card text-center">
+                <div class="card-body">
+                    <div class="fw-bold">Занятия</div>
+                    <div class="display-6" th:text="${overview.totalLessons}">0</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-2 col-sm-4">
+            <div class="card text-center">
+                <div class="card-body">
+                    <div class="fw-bold">Средний балл</div>
+                    <div class="display-6">
+                        <span th:if="${overview.overallAverageGrade != null}"
+                              th:text="${#numbers.formatDecimal(overview.overallAverageGrade, 1, 2)}">0.0</span>
+                        <span th:if="${overview.overallAverageGrade == null}" class="text-muted">—</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ГРАФИКИ -->
+    <div class="row mt-4 g-4">
+        <div class="col-lg-6">
+            <div class="card h-100">
+                <div class="card-header">
+                    Количество учеников по группам
+                </div>
+                <div class="card-body">
+                    <canvas id="studentsByGroupChart"></canvas>
+                    <p class="text-muted small mt-2" th:if="${#lists.isEmpty(groupStats)}">
+                        Пока нет данных по группам.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-6">
+            <div class="card h-100">
+                <div class="card-header">
+                    Средний балл по предметам
+                </div>
+                <div class="card-body">
+                    <canvas id="avgGradeBySubjectChart"></canvas>
+                    <p class="text-muted small mt-2" th:if="${#lists.isEmpty(subjectStats)}">
+                        Пока нет оценок по предметам.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Таблица по группам -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <h4>Группы: численность и средний балл</h4>
+            <table class="table table-sm table-bordered align-middle">
+                <thead class="table-light">
+                <tr>
+                    <th>Код</th>
+                    <th>Название</th>
+                    <th>Ученики</th>
+                    <th>Средний балл</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="s : ${groupStats}">
+                    <td th:text="${s.group.code}">JIV-101</td>
+                    <td th:text="${s.group.name}">Живопись, базовый курс</td>
+                    <td th:text="${s.studentCount}">0</td>
+                    <td>
+                        <span th:if="${s.averageGrade != null}"
+                              th:text="${#numbers.formatDecimal(s.averageGrade, 1, 2)}">4.20</span>
+                        <span th:if="${s.averageGrade == null}" class="text-muted">—</span>
+                    </td>
+                </tr>
+                <tr th:if="${#lists.isEmpty(groupStats)}">
+                    <td colspan="4" class="text-center text-muted">Нет данных по группам</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+        crossorigin="anonymous"></script>
+
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    const groupLabels = [[${groupLabels}]];
+    const groupStudentCounts = [[${groupStudentCounts}]];
+    const subjectLabels = [[${subjectLabels}]];
+    const subjectAvgGrades = [[${subjectAvgGrades}]];
+
+    // График "Ученики по группам"
+    if (groupLabels && groupLabels.length > 0) {
+        const ctx1 = document.getElementById('studentsByGroupChart').getContext('2d');
+        new Chart(ctx1, {
+            type: 'bar',
+            data: {
+                labels: groupLabels,
+                datasets: [{
+                    label: 'Ученики',
+                    data: groupStudentCounts,
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: { beginAtZero: true, ticks: { stepSize: 1 } }
+                }
+            }
+        });
+    }
+
+    // График "Средний балл по предметам"
+    if (subjectLabels && subjectLabels.length > 0) {
+        const ctx2 = document.getElementById('avgGradeBySubjectChart').getContext('2d');
+        new Chart(ctx2, {
+            type: 'bar',
+            data: {
+                labels: subjectLabels,
+                datasets: [{
+                    label: 'Средний балл',
+                    data: subjectAvgGrades,
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: { beginAtZero: true, max: 5 }
+                }
+            }
+        });
+    }
+    /*]]>*/
+</script>
+
+</body>
+</html>

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="ru"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${title} ?: 'Группа'">Группа</title>
+    <link rel="stylesheet"
+          href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+          crossorigin="anonymous">
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+
+</head>
+<body>
+<nav th:replace="fragments/navbar :: main-navbar"></nav>
+
+<div class="container mt-4">
+    <h1 th:text="${group.name}">Название группы</h1>
+    <p class="lead">
+        Код: <span th:text="${group.code}">JIV-101</span>
+    </p>
+
+    <dl class="row">
+        <dt class="col-sm-3">Год набора</dt>
+        <dd class="col-sm-9" th:text="${group.admissionYear}">2024</dd>
+
+        <dt class="col-sm-3">Уровень</dt>
+        <dd class="col-sm-9" th:text="${group.level}">Базовый</dd>
+
+        <dt class="col-sm-3">Куратор</dt>
+        <dd class="col-sm-9">
+            <span th:if="${group.curator != null}">
+                <a th:href="@{'/teachers/' + ${group.curator.id}}"
+                   th:text="${group.curator.fullName}">Иванов И.И.</a>
+            </span>
+            <span th:if="${group.curator == null}">
+                Не назначен
+            </span>
+        </dd>
+    </dl>
+
+    <div class="mt-3">
+        <h5>Описание</h5>
+        <p th:text="${group.description}">
+            Здесь можно указать расписание, особенности программы, требования и т.п.
+        </p>
+    </div>
+
+    <div class="mt-3">
+        <a class="btn btn-secondary" th:href="@{/groups}">Назад к списку</a>
+        <a class="btn btn-primary" th:href="@{'/groups/' + ${group.id} + '/edit'}">
+            Редактировать
+        </a>
+    </div>
+</div>
+<div class="mt-4">
+    <h4>Ученики группы</h4>
+
+    <div th:if="${#lists.isEmpty(students)}">
+        <p class="text-muted">В этой группе пока нет учеников.</p>
+    </div>
+
+    <ul th:if="${!#lists.isEmpty(students)}" class="list-group">
+        <li th:each="s : ${students}" class="list-group-item d-flex justify-content-between align-items-center">
+            <a th:href="@{'/students/' + ${s.id}}" th:text="${s.fullName}"></a>
+            <span th:text="${s.admissionYear}"></span>
+        </li>
+    </ul>
+</div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+        crossorigin="anonymous"></script>
+</body>
+</html>
